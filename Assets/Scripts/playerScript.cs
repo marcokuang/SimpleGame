@@ -26,4 +26,45 @@ public class playerScript : MonoBehaviour {
         moveDirection.y -= gravity * Time.deltaTime;
         controller.Move(moveDirection * Time.deltaTime);
     }
+
+    void OnTriggerEnter(Collider other) 
+    {
+        // Destroy(other.gameObject);
+
+        if (other.gameObject.CompareTag ("SpeedIncrease"))
+        {
+            Debug.Log("Increase Speed");
+            other.gameObject.SetActive (false);
+            StartCoroutine(WaitAndIncreaseSpeed(other, 3.0f));
+
+        }
+        else if (other.gameObject.CompareTag ("JumpIncrease")){
+            Debug.Log("Increase Jump Speed");
+            other.gameObject.SetActive (false);
+            StartCoroutine(WaitAndIncreaseJumpSpeed(other, 3.0f));
+        }
+    }
+
+    IEnumerator WaitAndIncreaseSpeed(Collider other, float waitTime) 
+    {
+        speed = 75f;
+        yield return new WaitForSeconds(waitTime);
+        print("WaitAndPrint " + Time.time);
+        revertSpeed();
+        other.gameObject.SetActive (true);
+    }
+
+    IEnumerator WaitAndIncreaseJumpSpeed(Collider other, float waitTime) 
+    {
+        jumpSpeed = 40f;
+        yield return new WaitForSeconds(waitTime);
+        print("WaitAndPrint " + Time.time);
+        jumpSpeed = 20f;
+        other.gameObject.SetActive (true);
+    }
+
+    void revertSpeed ()
+    {
+       speed = 25f;
+    }
 }
