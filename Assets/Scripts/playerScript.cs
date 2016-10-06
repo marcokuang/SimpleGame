@@ -6,13 +6,19 @@ public class playerScript : MonoBehaviour {
     private float gravity = 20.0f;
     private float jumpSpeed = 20.0f;
     private Vector3 moveDirection = Vector3.zero;
+    private int score;
+
     // Use this for initialization
     void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
+        score = 0;
+        CharacterController controller = GetComponent<CharacterController>();
+        TextMesh theText = GameObject.Find("GameOverBoard").GetComponent<TextMesh>();
+        theText.gameObject.SetActive(false);
+
+    }
+
+    // Update is called once per frame
+    void Update () {
         CharacterController controller = GetComponent<CharacterController>();
         if (controller.isGrounded)
         {
@@ -41,8 +47,25 @@ public class playerScript : MonoBehaviour {
         else if (other.gameObject.CompareTag ("JumpIncrease")){
             Debug.Log("Increase Jump Speed");
             other.gameObject.SetActive (false);
+            speed = 50f;
             StartCoroutine(WaitAndIncreaseJumpSpeed(other, 3.0f));
+            revertSpeed();
         }
+        else if (other.gameObject.CompareTag("Item3"))
+        {
+            other.gameObject.SetActive(false);
+            score++;
+            TextMesh theText = GameObject.Find("ScoreBoard").GetComponent<TextMesh>();
+            theText.text = "Score: " + score.ToString();
+            StartCoroutine(getPoints(other, 3.0f));
+        }
+    }
+
+    IEnumerator getPoints(Collider other, float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        print("WaitAndPrint " + Time.time);
+        other.gameObject.SetActive(true);
     }
 
     IEnumerator WaitAndIncreaseSpeed(Collider other, float waitTime) 

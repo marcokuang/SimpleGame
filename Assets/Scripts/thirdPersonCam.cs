@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class thirdPersonCam : MonoBehaviour {
     public GameObject target;
@@ -13,14 +14,22 @@ public class thirdPersonCam : MonoBehaviour {
 
     void LateUpdate()
     {
-        float horizontal = Input.GetAxis("Mouse X") * rotateSpeed;
+        if(target != null)
+        {
+            float horizontal = Input.GetAxis("Mouse X") * rotateSpeed;
+            target.transform.Rotate(0, horizontal, 0);
 
-        target.transform.Rotate(0, horizontal, 0);
+            float desiredAngle = target.transform.eulerAngles.y;
+            Quaternion rotation = Quaternion.Euler(0, desiredAngle, 0);
+            transform.position = target.transform.position - (rotation * offset);
 
-        float desiredAngle = target.transform.eulerAngles.y;
-        Quaternion rotation = Quaternion.Euler(0, desiredAngle, 0);
-        transform.position = target.transform.position - (rotation * offset);
+            transform.LookAt(target.transform);
+        }
+        else
+        {
+            //Application.LoadLevel(Application.loadedLevel);
+            //SceneManager.LoadScene("map", LoadSceneMode.Single);
+        }
 
-        transform.LookAt(target.transform);
     }
 }
